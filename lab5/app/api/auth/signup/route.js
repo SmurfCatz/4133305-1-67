@@ -1,28 +1,22 @@
-import { hash, hashSync } from "bcrypt"; //2
-import { PrismaClient } from "@prisma/client"; //3
+import { PrismaClient } from "@prisma/client";
+import { hashSync } from "bcrypt";
 
 const prisma = new PrismaClient();
 
 export async function POST(req) {
-  //1
   try {
-    const { email, name, password } = await req.json(); //1
-    // const hashedPassword = await hash(password, 10);
-    const hashedPassword = hashSync(password, 10); //2
-
+    const { name, email, password } = await req.json();
+    const hashedPass = hashSync(password, 10);
     const newUser = await prisma.user.create({
-      //3
       data: {
-        //1
-        email, //1
-        name, //1
-        password: hashedPassword, //2
+        name,
+        email,
+        password: hashedPass,
       },
     });
-
     return Response.json({
-      msg: "User Created !!",
-      newUser,
+      mgs: "user created!",
+      data: newUser,
     });
   } catch (err) {
     return Response.json(err, { status: 500 });
